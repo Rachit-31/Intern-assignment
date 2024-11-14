@@ -35,7 +35,7 @@ const createCar = asyncHandler(async( req, res) => {
 
 const uploadAdditionalImages = asyncHandler(async (req, res) => {
     const { carId } = req.params;
-    const images = req.files['images'] || []; // Ensure it's an array, even if empty.
+    const images = req.files['images'] || []; 
 
     const car = await Car.findOne({ _id: carId, user: req.user._id });
     if (!car) {
