@@ -17,7 +17,6 @@ const HomePage = () => {
             <div className="flex-grow sm:ml-64">
                 <Navbar toggleSidebar={toggleSidebar} />
                 <main className="pt-20 px-4 sm:px-8">
-                    {/* Renders the selected route component */}
                     <Outlet />
                 </main>
             </div>

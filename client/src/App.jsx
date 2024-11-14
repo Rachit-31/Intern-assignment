@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
@@ -6,17 +5,44 @@ import Dashboard from './pages/Dashboard';
 import UploadCar from './pages/UploadCar';
 import ViewCars from './pages/ViewCars';
 import ManageCars from './pages/ManageCars';
+import ProtectedRoute from './Protect';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
 
 function App() {
     return (
         <Router>
             <div className="App">
                 <Routes>
-                    <Route path="/" element={<HomePage />}>
-                        <Route index element={<Dashboard />} />
-                        <Route path="upload" element={<UploadCar />} />
-                        <Route path="view" element={<ViewCars />} />
-                        <Route path="manage" element={<ManageCars />} />
+                    <Route path="/signin" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+
+                    {/* protected routes */}
+                    <Route path="/" element={
+                        <ProtectedRoute>
+                            <HomePage />
+                        </ProtectedRoute>
+                    }>
+                        <Route index element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/upload" element={
+                            <ProtectedRoute>
+                                <UploadCar />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/view" element={
+                            <ProtectedRoute>
+                                <ViewCars />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/manage" element={
+                            <ProtectedRoute>
+                                <ManageCars />
+                            </ProtectedRoute>
+                        } />
                     </Route>
                 </Routes>
             </div>
