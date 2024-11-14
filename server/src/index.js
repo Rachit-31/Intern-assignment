@@ -3,6 +3,9 @@ import app from './app.js'
 
 import connectDB from "./db/connectTomongoDb.js"
 
+import { EventEmitter } from 'events';
+EventEmitter.defaultMaxListeners = 15;
+
 dotenv.config({
     path:'./.env'
 })

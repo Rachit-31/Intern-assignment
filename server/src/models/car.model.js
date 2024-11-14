@@ -1,5 +1,5 @@
 import mongoose  from "mongoose";
-
+import { Schema } from "mongoose";
 const carSchema = new mongoose.Schema({
     title: {
         type: String,
