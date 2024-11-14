@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCar, uploadAdditionalImages } from "../controller/product.controller.js";
+import { createCar, fetchPerticularCar, fetchUserProducts, uploadAdditionalImages } from "../controller/product.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -18,5 +18,7 @@ router.route("/:carId/image").post(
     uploadAdditionalImages 
 );
 
+router.route("/cars").get(verifyJWT, fetchUserProducts);
+router.route("/cars/:id").get(verifyJWT, fetchPerticularCar);
 
 export default router;

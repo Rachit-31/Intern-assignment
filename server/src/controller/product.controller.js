@@ -67,10 +67,37 @@ const uploadAdditionalImages = asyncHandler(async (req, res) => {
     );
 });
 
+const fetchUserProducts = asyncHandler(async (req, res) => {
+    
+    const userId = req.user._id; 
 
+    
+    const products = await Car.find({ user: userId });
 
+    if (!products || products.length === 0) {
+        throw new apiError(404, "No products found for this user.");
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, products, "Products fetched successfully.")
+    );
+});
+
+const fetchPerticularCar = asyncHandler(async(req, res) => {
+    const {id} = req.params;
+
+    const car = await Car.findById(id);
+    if(!car){
+        throw new apiError(404, "Car not found");
+    }
+    return res.status(200).json(
+        new apiResponse(200, car, "Car fetched succefully")
+    )
+})
 
 export {
     createCar,
-    uploadAdditionalImages
+    uploadAdditionalImages,
+    fetchUserProducts,
+    fetchPerticularCar
 }
