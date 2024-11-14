@@ -156,6 +156,32 @@ const deleteCar = asyncHandler(async (req, res) => {
     );
 });
 
+const getAllCars = asyncHandler(async (req, res) => {
+    const { keyword } = req.query;
+    const searchRegex = new RegExp(keyword, 'i'); // 'i' makes it case-insensitive
+    
+    try {
+      const cars = await Car.find({
+        user: req.user._id,  // Ensure the user is fetching their own cars
+        $or: [
+          { title: { $regex: searchRegex } },
+          { description: { $regex: searchRegex } },
+          { 'tags.car_type': { $regex: searchRegex } },
+          { 'tags.company': { $regex: searchRegex } },
+          { 'tags.dealer': { $regex: searchRegex } },
+        ],
+      });
+  
+      if (cars.length === 0) {
+        return res.status(200).json({ message: 'No cars found' });
+      }
+  
+      return res.status(200).json({ data: cars });
+    } catch (error) {
+      return res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+  });
+  
 
 export {
     createCar,
@@ -163,5 +189,6 @@ export {
     fetchUserProducts,
     fetchPerticularCar,
     updateCar,
-    deleteCar
+    deleteCar,
+    getAllCars
 }
