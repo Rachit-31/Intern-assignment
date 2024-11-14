@@ -102,9 +102,66 @@ const fetchPerticularCar = asyncHandler(async(req, res) => {
     )
 })
 
+const updateCar = asyncHandler(async (req, res) => {
+    const { carId } = req.params;
+    const { title, description, tags } = req.body;
+    const image = req.files;
+
+    
+    const car = await Car.findById(carId);
+    if (!car) {
+        throw new apiError(404, "Car not found");
+    }
+
+    if (car.user.toString() !== req.user._id.toString()) {
+        throw new apiError(403, "Unauthorized");
+    }
+
+    if (title) car.title = title;
+    if (description) car.description = description;
+    if (tags) car.tags = tags;
+
+    if (image && image.length > 0) {
+        const localPath = req.files?.image[0]?.path;
+        const uploadResult = await uploadOnCloudinary(localPath);
+        if (!uploadResult) {
+            throw new apiError(500, "Failed to upload image");
+        }
+        car.images = [uploadResult.url]; 
+    }
+
+    const updatedCar = await car.save();
+    return res.status(200).json(
+        new apiResponse(200, updatedCar, "Car details updated successfully")
+    );
+});
+
+const deleteCar = asyncHandler(async (req, res) => {
+    const { carId } = req.params;
+
+    
+    const car = await Car.findById(carId);
+    if (!car) {
+        throw new apiError(404, "Car not found");
+    }
+
+    
+    if (car.user.toString() !== req.user._id.toString()) {
+        throw new apiError(403, "Unauthorized");
+    }
+
+    await car.deleteOne();
+    return res.status(200).json(
+        new apiResponse(200, null, "Car deleted successfully")
+    );
+});
+
+
 export {
     createCar,
     uploadAdditionalImages,
     fetchUserProducts,
-    fetchPerticularCar
+    fetchPerticularCar,
+    updateCar,
+    deleteCar
 }
