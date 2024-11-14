@@ -1,25 +1,76 @@
-// import React from 'react'
-
-// const Login = () => {
-//   return (
-//     <div>Login</div>
-//   )
-// }
-
-// export default Login
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import axios from "axios";
+import { API } from '../utils/ApiURI';
+import Loader from '../components/Loader';  // Assuming you have a Loader component
 
 const Login = () => {
+  const refEmail = useRef(null);
+  const refPassword = useRef(null);
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);  // State to handle loading
+
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
+    const email = refEmail.current.value;
+    const password = refPassword.current.value;
+
+    if (!email || !password) {
+      toast.error('Email and password are required');
+      return;
+    }
+
+    setLoading(true);  // Set loading to true while waiting for the API response
+
+    try {
+      // Making the API request to backend login route
+      const response = await axios.post(`${API}/login`, {
+        email: email,
+        password: password,
+      });
+
+      // Check if response status is 200 (OK)
+      if (response.status === 200) {
+        toast.success('Successfully Logged In!');
+
+        // Store the token and user ID in localStorage
+        localStorage.setItem('token', response.data.data.accessToken);
+        localStorage.setItem('userId', response.data.data.user._id);
+
+        // Navigate to the home page or dashboard
+        navigate('/');
+        window.location.reload();
+      }
+    } catch (err) {
+      // Error handling if the API request fails
+      if (axios.isAxiosError(err) && err.response) {
+        if (err.response.status === 404) {
+          toast.error('User does not exist');
+        } else if (err.response.status === 401) {
+          toast.error(err.response.data.message || 'Password Incorrect');
+        }
+      } else {
+        toast.error('An error occurred');
+      }
+    } finally {
+      setLoading(false);  // Reset loading state after the API call is complete
+    }
+  };
+
+  if (loading) {
+    return <Loader />; // Show only loader while loading
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full mx-auto bg-white p-8 rounded-lg shadow-sm">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
           Login
         </h2>
-        
-        <form className="space-y-6">
 
+        <form onSubmit={handleOnSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Your email
@@ -27,6 +78,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="xyz@gmail.com"
+              ref={refEmail}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400"
             />
           </div>
@@ -38,6 +90,7 @@ const Login = () => {
             <input
               type="password"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              ref={refPassword}
             />
           </div>
 
@@ -45,14 +98,14 @@ const Login = () => {
             type="submit"
             className="w-full py-2 px-4 border border-transparent rounded-md text-white bg-blue-600 hover:bg-blue-700 text-sm font-medium"
           >
-            Create an account
+            Login
           </button>
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-600">
-          New User ?{' '}
+          New User?{' '}
           <Link to="/signup" className="text-blue-600 hover:text-blue-500">
-            Login here
+            Register here
           </Link>
         </p>
       </div>
