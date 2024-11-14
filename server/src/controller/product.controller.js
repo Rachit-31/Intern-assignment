@@ -4,34 +4,41 @@ import apiResponse from "../utils/apiResponse.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 import { Car } from "../models/car.model.js";
 
-const createCar = asyncHandler(async( req, res) => {
+const createCar = asyncHandler(async (req, res) => {
     const { title, description, tags } = req.body;
     const image = req.files;
-
+  
+    // Check for required fields
     if (!title || !description || !image || image.length === 0) {
-        throw new apiError(400, "Title, description, and at least one image are required");
+      throw new apiError(400, "Title, description, and at least one image are required");
     }
-    if (!tags || !tags.car_type || !tags.company || !tags.dealer) {
-        throw new apiError(400, "All tags (car_type, company, dealer) are required");
+  
+    // Parse and validate tags
+    const parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
+  
+    if (!parsedTags || !parsedTags.car_type || !parsedTags.company || !parsedTags.dealer) {
+      throw new apiError(400, "All tags (car_type, company, dealer) are required");
     }
-
+  
+    // Upload image to Cloudinary
     const localPath = req.files?.image[0]?.path;
     const uploadResult = await uploadOnCloudinary(localPath);
     if (!uploadResult) {
-        throw new apiError(500, "Failed to upload image");
+      throw new apiError(500, "Failed to upload image");
     }
-
+  
+    // Create car in the database
     const car = await Car.create({
-        title,
-        description,
-        images: [uploadResult.url], 
-        tags,
-        user: req.user._id
+      title,
+      description,
+      images: [uploadResult.url],
+      tags: parsedTags,
+      user: req.user._id
     });
-    return res.status(201).json(
-        new apiResponse(201, car, "Car created successfully with initial image")
-    );
-})
+  
+    return res.status(201).json(new apiResponse(201, car, "Car created successfully with initial image"));
+  });
+  
 
 const uploadAdditionalImages = asyncHandler(async (req, res) => {
     const { carId } = req.params;
