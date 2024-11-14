@@ -8,6 +8,7 @@ import ManageCars from './pages/ManageCars';
 import ProtectedRoute from './Protect';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
+import ProductCar from './pages/ProductCar';
 
 function App() {
     return (
@@ -41,6 +42,11 @@ function App() {
                         <Route path="/manage" element={
                             <ProtectedRoute>
                                 <ManageCars />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/product/:productId" element={
+                            <ProtectedRoute>
+                                <ProductCar />
                             </ProtectedRoute>
                         } />
                     </Route>

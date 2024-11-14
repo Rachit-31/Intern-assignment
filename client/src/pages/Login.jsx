@@ -3,14 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from "axios";
 import { API } from '../utils/ApiURI';
-import Loader from '../components/Loader';  // Assuming you have a Loader component
+import Loader from '../components/Loader';  
 
 const Login = () => {
   const refEmail = useRef(null);
   const refPassword = useRef(null);
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);  // State to handle loading
+  const [loading, setLoading] = useState(false);  
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
@@ -22,29 +22,28 @@ const Login = () => {
       return;
     }
 
-    setLoading(true);  // Set loading to true while waiting for the API response
+    setLoading(true);  
 
     try {
-      // Making the API request to backend login route
       const response = await axios.post(`${API}/login`, {
         email: email,
         password: password,
       });
 
-      // Check if response status is 200 (OK)
+      
       if (response.status === 200) {
         toast.success('Successfully Logged In!');
 
-        // Store the token and user ID in localStorage
+        
         localStorage.setItem('token', response.data.data.accessToken);
         localStorage.setItem('userId', response.data.data.user._id);
 
-        // Navigate to the home page or dashboard
+        
         navigate('/');
         window.location.reload();
       }
     } catch (err) {
-      // Error handling if the API request fails
+      
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 404) {
           toast.error('User does not exist');
@@ -55,12 +54,12 @@ const Login = () => {
         toast.error('An error occurred');
       }
     } finally {
-      setLoading(false);  // Reset loading state after the API call is complete
+      setLoading(false);  
     }
   };
 
   if (loading) {
-    return <Loader />; // Show only loader while loading
+    return <Loader />; 
   }
 
   return (
