@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { API, PRODUCT_FILES } from "../utils/ApiURI"; 
+import { PRODUCT_FILES } from "../utils/ApiURI"; 
 import toast from "react-hot-toast";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
@@ -58,7 +58,6 @@ const ProductCar = () => {
     }
 
     try {
-      // Make API call to delete the image
       const response = await axios.delete(
         `${PRODUCT_FILES}/cars/${productId}/images/${encodeURIComponent(imageUrl)}`,
         {
@@ -69,7 +68,6 @@ const ProductCar = () => {
       );
 
       if (response.status === 200) {
-        // On successful deletion, update the product state to reflect the changes
         const updatedProduct = {
           ...product,
           images: product.images.filter((image) => image !== imageUrl),
@@ -99,7 +97,6 @@ const ProductCar = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold">{product.title}</h1>
 
-      {/* Image Gallery with Delete Button */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
         {product.images && product.images.length > 0 ? (
           product.images.map((image, index) => (
@@ -110,13 +107,15 @@ const ProductCar = () => {
                 className="w-full h-32 object-cover rounded-md"
                 style={{ aspectRatio: "1" }}
               />
-              <button
-                onClick={() => handleDeleteImage(image)}
-                className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transform transition-all ease-in-out duration-200 hover:scale-110"
 
-              >
-                <RiDeleteBin6Line />
-              </button>
+              {product.images.length > 1 && (
+                <button
+                  onClick={() => handleDeleteImage(image)}
+                  className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transform transition-all ease-in-out duration-200 hover:scale-110"
+                >
+                  <RiDeleteBin6Line />
+                </button>
+              )}
             </div>
           ))
         ) : (
