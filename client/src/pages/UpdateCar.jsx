@@ -62,7 +62,6 @@ const UpdateCar = () => {
 
     return (
         <div className="container mx-auto p-6">
-            <h1 className="text-2xl font-semibold mb-4">Update Car</h1>
             {error && <div className="bg-red-100 text-red-800 p-2 mb-4">{error}</div>}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { API, PRODUCT_FILES } from "../utils/ApiURI";
+import toast from "react-hot-toast";
 
 const UploadCar = () => {
   const [title, setTitle] = useState("");
@@ -38,7 +39,7 @@ const UploadCar = () => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("tags", JSON.stringify(tags)); // Keep the tags as an object (sent as JSON string)
+    formData.append("tags", JSON.stringify(tags)); 
   
     if (image) {
       formData.append("image", image);
@@ -63,14 +64,14 @@ const UploadCar = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-  
       setSuccess("Car added successfully!");
       setLoading(false);
       setTitle("");
       setDescription("");
       setTags({ car_type: "", company: "", dealer: "" });
       setImage(null);
-      window.location.reload();
+      // window.location.reload();
+      toast.success("Car details added successfully")
     } catch (err) {
       setLoading(false);
       if (err.response) {
@@ -85,8 +86,6 @@ const UploadCar = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold">Add New Car</h1>
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        {error && <div className="text-red-500">{error}</div>}
-        {success && <div className="text-green-500">{success}</div>}
 
         <div className="space-y-2">
           <label htmlFor="title" className="block font-semibold">
