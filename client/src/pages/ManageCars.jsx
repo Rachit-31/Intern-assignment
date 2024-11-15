@@ -26,14 +26,12 @@ const ManageCarsPage = () => {
   //   fetchCars();
   // }, []);
   return (
-    <div>
+    <div className="flex flex-col">
       <h1 className="font-bold  text-3xl">Manage Your Cars</h1>
       {products.map((car) => (
         <div key={car._id} className="car-card">
           <h1 className="text-2xl font-semibold mb-4">Update Car</h1>
-          <h3>{car.title}</h3>
-          <p>{car.description}</p>
-          <img src={car.image} alt="" />
+          <h3 className="text-xl">Title: {car.title}</h3>
           <UpdateCar carId={car._id} />
           <DeleteCar carId={car._id} />
         </div>

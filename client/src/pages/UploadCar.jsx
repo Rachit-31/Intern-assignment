@@ -70,8 +70,11 @@ const UploadCar = () => {
       setDescription("");
       setTags({ car_type: "", company: "", dealer: "" });
       setImage(null);
-      // window.location.reload();
+      
       toast.success("Car details added successfully")
+      setTimeout(() => {
+        window.location.reload();
+    }, 1000);
     } catch (err) {
       setLoading(false);
       if (err.response) {
