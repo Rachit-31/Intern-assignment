@@ -27,7 +27,7 @@ export const ProductProvider = ({ children }) => {
 
             const response = await axios.get(`${PRODUCT_FILES}/cars`, {
                 headers: {
-                    Authorization: `Bearer ${token}`, // Pass the token here
+                    Authorization: `Bearer ${token}`, 
                 },
             });
 
