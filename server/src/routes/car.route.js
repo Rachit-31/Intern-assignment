@@ -1,9 +1,7 @@
 import { Router } from "express";
-import { createCar, deleteCar, fetchPerticularCar, fetchUserProducts, getAllCars, updateCar, uploadAdditionalImages } from "../controller/product.controller.js";
+import { createCar, deleteCar, deleteImage, fetchPerticularCar, fetchUserProducts, getAllCars, updateCar, uploadAdditionalImages } from "../controller/product.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import asyncHandler from "../utils/asyncHandler.js";
-import { Car } from "../models/car.model.js";
 
 const router = Router();
 
@@ -30,6 +28,7 @@ router.route("/car/:carId").put(
 router.route("/delete/:carId").delete(verifyJWT, deleteCar);
 
 router.route("/search").get(verifyJWT, getAllCars)
+router.route("/cars/:carId/images/:imageUrl").delete(verifyJWT, deleteImage)
 
 
 export default router;

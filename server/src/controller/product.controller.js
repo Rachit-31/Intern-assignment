@@ -196,6 +196,33 @@ const getAllCars = asyncHandler(async (req, res) => {
       return res.status(500).json({ message: 'Server Error', error: error.message });
     }
   });
+
+  const deleteImage = asyncHandler(async (req, res) => {
+    const { carId, imageUrl } = req.params;
+  
+   
+    const car = await Car.findOne({ _id: carId, user: req.user.id });
+    if (!car) {
+      throw new apiError(404, "Car not found or unauthorized");
+    }
+  
+   
+    const imageIndex = car.images.indexOf(imageUrl);
+    if (imageIndex === -1) {
+      
+      throw new apiError(404, "Image not found");
+    }
+  
+    car.images.splice(imageIndex, 1);
+  
+    
+    await car.save();
+  
+    // Send response
+    return res.status(200).json(
+      new apiResponse(200, car, "Image deleted successfully")
+    );
+  });
   
 
 export {
@@ -205,5 +232,6 @@ export {
     fetchPerticularCar,
     updateCar,
     deleteCar,
-    getAllCars
+    getAllCars,
+    deleteImage 
 }
