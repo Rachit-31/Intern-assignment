@@ -5,6 +5,7 @@ import DeleteCar from "./DeleteCar";
 
 const ManageCarsPage = () => {
   const { products } = useProducts();
+  console.log("products",products)
 
   return (
     <div className="flex flex-col items-center justify-center py-8 px-4 sm:px-6 lg:px-8">

@@ -105,36 +105,51 @@ const fetchPerticularCar = asyncHandler(async(req, res) => {
 const updateCar = asyncHandler(async (req, res) => {
     const { carId } = req.params;
     const { title, description, tags } = req.body;
+    console.log("Tags from request:", tags);  // Log the tags from the request
     const image = req.files;
+    console.log("Image data:", image);  // Log the image data
 
-    
-    const car = await Car.findById(carId);
-    if (!car) {
-        throw new apiError(404, "Car not found");
-    }
+    // Find and update the car by its ID
+    const updateData = {};
 
-    if (car.user.toString() !== req.user._id.toString()) {
-        throw new apiError(403, "Unauthorized");
-    }
+    if (title) updateData.title = title;
+    if (description) updateData.description = description;
+    if (tags) updateData.tags = tags;  // Directly assign the new tags
 
-    if (title) car.title = title;
-    if (description) car.description = description;
-    if (tags) car.tags = tags;
-
+    // If there’s an image, upload it to Cloudinary and update the car’s image
     if (image && image.length > 0) {
         const localPath = req.files?.image[0]?.path;
         const uploadResult = await uploadOnCloudinary(localPath);
         if (!uploadResult) {
             throw new apiError(500, "Failed to upload image");
         }
-        car.images = [uploadResult.url]; 
+        updateData.images = [uploadResult.url];  // Replace the car's images with the uploaded image URL
     }
 
-    const updatedCar = await car.save();
+    const updatedCar = await Car.findByIdAndUpdate(
+        carId,   
+        { $set: updateData },  // The data to update
+        { new: true }  // Return the updated car after the update is applied
+    );
+
+    if (!updatedCar) {
+        throw new apiError(404, "Car not found");
+    }
+
+    
+    if (updatedCar.user.toString() !== req.user._id.toString()) {
+        throw new apiError(403, "Unauthorized");
+    }
+
+    console.log('Updated car:', updatedCar);  // Log the updated car
+
+    // Return the updated car details as a response
     return res.status(200).json(
         new apiResponse(200, updatedCar, "Car details updated successfully")
     );
 });
+
+
 
 const deleteCar = asyncHandler(async (req, res) => {
     const { carId } = req.params;

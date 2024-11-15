@@ -31,6 +31,7 @@ const UpdateCar = ({ carId }) => {
         };
         fetchCar();
     }, [carId]);
+    console.log(carId)
 
     // Handle image file change
     const handleImageChange = (e) => {
@@ -58,12 +59,13 @@ const UpdateCar = ({ carId }) => {
             try {
                 // Upload image first
                 const token = localStorage.getItem("token");
-                await axios.post(`${PRODUCT_FILES}/car/${carId}/image`, imageFormData, {
+                await axios.post(`${PRODUCT_FILES}/${carId}/image`, imageFormData, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "multipart/form-data",
                     },
                 });
+
             } catch (err) {
                 setLoading(false);
                 setError("Failed to upload image.");
@@ -76,10 +78,12 @@ const UpdateCar = ({ carId }) => {
             const carFormData = new FormData();
             carFormData.append("title", car.title);
             carFormData.append("description", car.description);
-            carFormData.append("car_type", car.tags.car_type);
-            carFormData.append("company", car.tags.company);
-            carFormData.append("dealer", car.tags.dealer);
-
+        
+            // Iterate over each tag and append it to the FormData
+            for (const [key, value] of Object.entries(car.tags)) {
+                carFormData.append(`tags[${key}]`, value);
+            }
+        
             const token = localStorage.getItem("token");
             await axios.put(`${PRODUCT_FILES}/car/${carId}`, carFormData, {
                 headers: {
@@ -93,6 +97,7 @@ const UpdateCar = ({ carId }) => {
             setLoading(false);
             setError(err.response?.data?.message || "Failed to update car.");
         }
+        
     };
 
     return (

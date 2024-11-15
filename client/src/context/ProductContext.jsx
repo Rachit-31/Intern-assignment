@@ -21,6 +21,7 @@ export const ProductProvider = ({ children }) => {
             
             if (!token) {
                 setError("You must be logged in to view products.");
+                setProducts([]); 
                 setLoading(false);
                 return;
             }
@@ -43,7 +44,7 @@ export const ProductProvider = ({ children }) => {
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [products]);
 
     return (
         <ProductContext.Provider value={{ products, loading, error }}>
