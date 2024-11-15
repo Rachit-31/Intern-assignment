@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { API, PRODUCT_FILES } from "../utils/ApiURI"; // Adjust API import based on your project structure
+import toast from "react-hot-toast";
 
 const UpdateCar = ({ carId }) => {
     const navigate = useNavigate();
@@ -67,6 +68,9 @@ const UpdateCar = ({ carId }) => {
                 });
 
             } catch (err) {
+                if(err.response && err.response.status === 400){
+                    toast.error("Cannot upload more than 10 images per car");
+                }
                 setLoading(false);
                 setError("Failed to upload image.");
                 return;
