@@ -32,7 +32,6 @@ const Login = () => {
 
       
       if (response.status === 200) {
-        toast.success('Successfully Logged In!');
 
         
         localStorage.setItem('token', response.data.data.accessToken);
@@ -40,7 +39,7 @@ const Login = () => {
 
         
         navigate('/');
-        window.location.reload();
+        toast.success('Successfully Logged In!');
       }
     } catch (err) {
       

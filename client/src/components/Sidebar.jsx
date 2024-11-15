@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaCar, FaUpload, FaList, FaEdit, FaTimes } from 'react-icons/fa';
 import { MdOutlineLogout } from "react-icons/md";
 import { useNavigate } from 'react-router-dom'; // For navigation
+import toast from 'react-hot-toast';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const navigate = useNavigate(); 
@@ -12,6 +13,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const handleLogout = () => {
         localStorage.removeItem("token");
         navigate("/signin");
+        toast.success("Successfully logged out")
     };
 
     return (
@@ -20,7 +22,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0 w-64`}
       >
-        {/* Close Button for Mobile */}
+        
         <div className="flex justify-between items-center px-4 py-6 sm:hidden">
           <span className="text-2xl font-semibold">Car Management</span>
           <button onClick={toggleSidebar} className="text-white">
@@ -28,7 +30,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </button>
         </div>
 
-        {/* Sidebar Header for Larger Screens */}
+        
         <div className="hidden sm:block px-4 py-6 text-2xl font-semibold text-center">
           Car Management
         </div>
