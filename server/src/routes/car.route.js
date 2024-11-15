@@ -27,7 +27,7 @@ router.route("/car/:carId").put(
     verifyJWT, 
     updateCar 
 );
-router.route("/car/:carId").delete(verifyJWT, deleteCar);
+router.route("/delete/:carId").delete(verifyJWT, deleteCar);
 
 router.route("/search").get(verifyJWT, getAllCars)
 

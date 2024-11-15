@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import toast from 'react-hot-toast'
+import { PRODUCT_FILES } from "../utils/ApiURI";
 
 const DeleteCar = ({ carId }) => {
     const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ const DeleteCar = ({ carId }) => {
         try {
             const token = localStorage.getItem("token");
 
-            await axios.delete(`http://localhost:8000/api/car/${carId}`, {
+            await axios.delete(`${PRODUCT_FILES}/delete/${carId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
