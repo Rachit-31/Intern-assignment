@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 
 const ViewCars = () => {
-    const { products, loading } = useProducts();
+    const { products, loading } = useProducts();  
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredProducts, setFilteredProducts] = useState(products);
 
@@ -21,7 +21,7 @@ const ViewCars = () => {
             );
         });
         setFilteredProducts(filtered);
-    }, [products, searchTerm]);
+    }, [products, searchTerm]);  
 
     if (loading) {
         return <div>Loading...</div>;
@@ -38,9 +38,9 @@ const ViewCars = () => {
                 className="mb-6 p-2 border border-gray-300 rounded w-full"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {products.length === 0 ? (
+                {filteredProducts.length === 0 ? (
                     <p>No cars available</p>
-                ) : filteredProducts.length > 0 ? (
+                ) : (
                     filteredProducts.map((car) => (
                         <div key={car._id} className="border rounded-lg p-4 shadow-md">
                             <img
@@ -60,8 +60,6 @@ const ViewCars = () => {
                             </Link>
                         </div>
                     ))
-                ) : (
-                    <p>No cars available</p>
                 )}
             </div>
         </div>

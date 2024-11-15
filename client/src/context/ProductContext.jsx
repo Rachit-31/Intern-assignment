@@ -1,7 +1,7 @@
+// ProductContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { API } from "../utils/ApiURI"; 
-import { PRODUCT_FILES } from "../utils/ApiURI"; 
+import { PRODUCT_FILES } from "../utils/ApiURI";
 
 // Create a Context for products
 const ProductContext = createContext();
@@ -11,30 +11,27 @@ export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [token, setToken] = useState(localStorage.getItem("token")); // Store the token
 
+    // Function to fetch products
     const fetchProducts = async () => {
         setLoading(true);
         setError("");
         try {
-            const token = localStorage.getItem("token");
-
-            
             if (!token) {
-                setError("You must be logged in to view products.");
-                setProducts([]); 
+                setProducts([]); // Clear products if no token
                 setLoading(false);
                 return;
             }
 
             const response = await axios.get(`${PRODUCT_FILES}/cars`, {
                 headers: {
-                    Authorization: `Bearer ${token}`, 
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
             // Set the fetched products
             setProducts(response.data.data);
-            console.log(response.data.data)
             setLoading(false);
         } catch (err) {
             setLoading(false);
@@ -42,12 +39,13 @@ export const ProductProvider = ({ children }) => {
         }
     };
 
+    // Re-fetch products whenever the token changes
     useEffect(() => {
         fetchProducts();
-    }, [products]);
+    }, [token]); // Depend on token
 
     return (
-        <ProductContext.Provider value={{ products, loading, error }}>
+        <ProductContext.Provider value={{ products, loading, error, token, setToken }}>
             {children}
         </ProductContext.Provider>
     );

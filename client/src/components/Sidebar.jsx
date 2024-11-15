@@ -1,19 +1,21 @@
-// src/components/Sidebar.js
+// Sidebar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaCar, FaUpload, FaList, FaEdit, FaTimes } from 'react-icons/fa';
 import { MdOutlineLogout } from "react-icons/md";
 import { useNavigate } from 'react-router-dom'; // For navigation
 import toast from 'react-hot-toast';
+import { useProducts } from '../context/ProductContext';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+    const { setToken } = useProducts(); // Use setToken from context
     const navigate = useNavigate(); 
 
-    
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/signin");
-        toast.success("Successfully logged out")
+        localStorage.removeItem("token"); // Remove token from localStorage
+        setToken(null); // Clear token from context
+        navigate("/signin"); // Redirect to signin page
+        toast.success("Successfully logged out");
     };
 
     return (
@@ -74,7 +76,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               </Link>
             </li>
             <li className="hover:bg-gray-700 p-4">
-              <button onClick={handleLogout} className="flex items-center"><MdOutlineLogout className="mr-3" /> Logout</button>
+              <button onClick={handleLogout} className="flex items-center">
+                <MdOutlineLogout className="mr-3" /> Logout
+              </button>
             </li>
           </ul>
         </nav>

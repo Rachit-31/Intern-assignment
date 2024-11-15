@@ -37,9 +37,9 @@ const Login = () => {
         localStorage.setItem('token', response.data.data.accessToken);
         localStorage.setItem('userId', response.data.data.user._id);
 
-        
         navigate('/');
         toast.success('Successfully Logged In!');
+        window.location.reload()
       }
     } catch (err) {
       
