@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { API, PRODUCT_FILES } from "../utils/ApiURI";
 
-const UpdateCar = () => {
-    const { carId } = useParams();
+const UpdateCar = ({carId}) => {
+    const navigate = useNavigate();
 
     const [car, setCar] = useState({
         title: "",
@@ -16,11 +16,13 @@ const UpdateCar = () => {
     const [error, setError] = useState("");
     const [file, setFile] = useState(null);
 
-    
     useEffect(() => {
         const fetchCar = async () => {
             try {
-                const response = await axios.get(`${PRODUCT_FILES}/cars/${carId}`);
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`${PRODUCT_FILES}/cars/${carId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 setCar(response.data.data);
             } catch (err) {
                 setError("Failed to fetch car details.");
@@ -29,8 +31,7 @@ const UpdateCar = () => {
         fetchCar();
     }, [carId]);
 
-    // Handle form submit
-    const handleSubmit = async (e) => {
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         setLoading(true);
         setError("");
@@ -38,27 +39,39 @@ const UpdateCar = () => {
         const formData = new FormData();
         formData.append("title", car.title);
         formData.append("description", car.description);
-        formData.append("tags", JSON.stringify(car.tags));
-        if (file) formData.append("image", file);
+        formData.append("car_type", car.tags.car_type);
+        formData.append("company", car.tags.company);
+        formData.append("dealer", car.tags.dealer);
+
+        if (file) {
+            // File size validation (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                setError("File size exceeds 5MB.");
+                setLoading(false);
+                return;
+            }
+            formData.append("image", file);
+        }
 
         try {
             const token = localStorage.getItem("token");
             await axios.put(
-                `${PRODUCT_FILES}/cars/${carId}`,  
+                `${PRODUCT_FILES}/car/${carId}`,
                 formData,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        "Content-Type": "multipart/form-data" 
+                        "Content-Type": "multipart/form-data",
                     },
                 }
             );
             setLoading(false);
+            navigate(`/product/${carId}`);  // Redirect to the updated car details page or another page
         } catch (err) {
             setLoading(false);
             setError(err.response?.data?.message || "Failed to update car.");
         }
-    };
+    }, [car, file, carId, navigate]);
 
     return (
         <div className="container mx-auto p-6">
@@ -70,7 +83,7 @@ const UpdateCar = () => {
                         type="text"
                         id="title"
                         value={car.title}
-                        onChange={(e) => setCar({ ...car, title: e.target.value })}
+                        onChange={(e) => setCar((prevCar) => ({ ...prevCar, title: e.target.value }))}
                         className="w-full p-2 border rounded-md"
                         required
                     />
@@ -80,7 +93,7 @@ const UpdateCar = () => {
                     <textarea
                         id="description"
                         value={car.description}
-                        onChange={(e) => setCar({ ...car, description: e.target.value })}
+                        onChange={(e) => setCar((prevCar) => ({ ...prevCar, description: e.target.value }))}
                         className="w-full p-2 border rounded-md"
                         required
                     />
@@ -92,21 +105,21 @@ const UpdateCar = () => {
                             type="text"
                             placeholder="Car Type"
                             value={car.tags.car_type}
-                            onChange={(e) => setCar({ ...car, tags: { ...car.tags, car_type: e.target.value } })}
+                            onChange={(e) => setCar((prevCar) => ({ ...prevCar, tags: { ...prevCar.tags, car_type: e.target.value } }))}
                             className="w-full p-2 border rounded-md"
                         />
                         <input
                             type="text"
                             placeholder="Company"
                             value={car.tags.company}
-                            onChange={(e) => setCar({ ...car, tags: { ...car.tags, company: e.target.value } })}
+                            onChange={(e) => setCar((prevCar) => ({ ...prevCar, tags: { ...prevCar.tags, company: e.target.value } }))}
                             className="w-full p-2 border rounded-md"
                         />
                         <input
                             type="text"
                             placeholder="Dealer"
                             value={car.tags.dealer}
-                            onChange={(e) => setCar({ ...car, tags: { ...car.tags, dealer: e.target.value } })}
+                            onChange={(e) => setCar((prevCar) => ({ ...prevCar, tags: { ...prevCar.tags, dealer: e.target.value } }))}
                             className="w-full p-2 border rounded-md"
                         />
                     </div>

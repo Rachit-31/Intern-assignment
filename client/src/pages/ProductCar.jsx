@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { API, PRODUCT_FILES } from "../utils/ApiURI"; 
+import toast from "react-hot-toast";
 
 const ProductCar = () => {
   const { productId } = useParams();
@@ -17,6 +18,7 @@ const ProductCar = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
+          toast.error("You must be logged in to view product details.")
           setError("You must be logged in to view product details.");
           setLoading(false);
           return;
